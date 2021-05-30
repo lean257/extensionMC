@@ -1,11 +1,13 @@
 const express = require('express');
+var path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
-const axios = require('axios');
 const { getRenderResp } = require('./yelpResponse');
 
 app.use(express.json());
-
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname + '/index.html'));
+});
 app.post('/', (req, res) => {
   if (req.header('x-mc-action') == 'controls') {
     res.json({
@@ -21,7 +23,9 @@ app.post('/', (req, res) => {
       ],
     });
   } else {
-    getRenderResp().then((data) => {
+    // parse out the controls that get sent with render POST request
+    const { controlValues } = req.body;
+    getRenderResp(controlValues).then((data) => {
       res.send(data);
     });
   }

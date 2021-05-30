@@ -29,7 +29,6 @@ async function getBizData() {
 async function getRenderResp({ show_rating = true }) {
   const biz_data = await getBizData();
   const { image_url, url, rating, review_count, price, location } = biz_data;
-  const star_icon_url = 'https://img.icons8.com/fluent/48/000000/star.png';
 
   return {
     type: 'STACK_LAYOUT',
@@ -86,37 +85,7 @@ async function getRenderResp({ show_rating = true }) {
           {
             type: 'CLUSTER_LAYOUT',
             children: [
-              {
-                type: 'CLUSTER_LAYOUT',
-                properties: {
-                  spacing: 0,
-                },
-                children: [
-                  {
-                    type: 'TEXT',
-                    properties: {
-                      text: {
-                        type: 'doc',
-                        content: [
-                          {
-                            type: 'text',
-                            text: `${rating}`,
-                          },
-                        ],
-                      },
-                    },
-                  },
-                  {
-                    type: 'IMAGE',
-                    properties: {
-                      alt: 'star icon',
-                      src: `${star_icon_url}`,
-                      width: 20,
-                      maxHeight: 20,
-                    },
-                  },
-                ],
-              },
+              ratingRender(show_rating, rating),
               {
                 type: 'TEXT',
                 properties: {
@@ -152,4 +121,44 @@ async function getRenderResp({ show_rating = true }) {
     ], // end of all outer children
   };
 }
+
+// allow rendering depending on control values
+const ratingRender = (show_rating, rating) => {
+  const star_icon_url = 'https://img.icons8.com/fluent/48/000000/star.png';
+  if (show_rating) {
+    return {
+      type: 'CLUSTER_LAYOUT',
+      properties: {
+        spacing: 0,
+      },
+      children: [
+        {
+          type: 'TEXT',
+          properties: {
+            text: {
+              type: 'doc',
+              content: [
+                {
+                  type: 'text',
+                  text: `${rating}`,
+                },
+              ],
+            },
+          },
+        },
+        {
+          type: 'IMAGE',
+          properties: {
+            alt: 'star icon',
+            src: `${star_icon_url}`,
+            width: 15,
+            maxHeight: 15,
+          },
+        },
+      ],
+    };
+  } else {
+    return;
+  }
+};
 exports.getRenderResp = getRenderResp;
