@@ -1,6 +1,5 @@
 const axios = require('axios');
-const API_KEY =
-  '-QPl11oKmKSmT7oKLPv_LfmA4-BCletMeVwD9f61KU_HMHwdJXc7Ga30WVC7DekqMtCC0REsmrv75hMStbCGj1NiWiYTGFFx1IDbcGbQcL1Kk4YL4i9wvCB580U9YHYx';
+const API_KEY = require('./config').YELP_API_KEY;
 
 let yelpREST = axios.create({
   baseURL: 'https://api.yelp.com/v3/',
