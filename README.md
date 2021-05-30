@@ -7,4 +7,8 @@ To start:
 
 Tunnel your local host using ngrok or host your app on any external server, use it as your extension endpoint when registering your extension.
 
-![Extension sample](https://i.ibb.co/wzHfRY3/Screen-Shot-2021-03-09-at-10-50-24-AM.png)
+This extension sample service is deployed here: https://extensionexample.herokuapp.com/
+
+It is testable using 2 methods:
+1. send a POST request to the service using your method of choice, either curl, or using postman
+2. Go through the installation flow of an extension inside the extension zone, then open the email editor and try to add it to the draft email campaign that you created.
