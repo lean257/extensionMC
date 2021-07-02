@@ -1,16 +1,20 @@
-const { createHmac } = require('crypto');
+const CryptoJS = require('crypto-js');
+const signingKey = require('./config').MC_SIGNING_KEY;
 
-function verifySignature(signedAt, givenHmac, signingKey, rawBody) {
-  const now = Math.floor(Date.now() / 1000);
-  if (now - signedAt > 600) {
-    throw new Error('expired signature');
-  }
-  const hmac = createHmac('sha256', signingKey);
-  hmac.update(`${signedAt}.${rawBody}`);
-  const computedHmac = hmac.digest('hex');
-  if (computedHmac !== givenHmac) {
-    throw new Error('invalid signature');
-  }
-  return true;
+function verifySignature(signature_header, request_body, secret) {
+  const split_header = signature_header.split(',');
+  const time = split_header[0].split('=');
+  const v1 = split_header[1].split('=');
+  const signed_payload = time[1].toString() + '.' + request_body;
+  const hmac = CryptoJS.HmacSHA256(signed_payload, secret).toString();
+  return hmac === v1[1];
 }
-exports.verifySignature = verifySignature;
+
+function verifyRequest(req) {
+  return verifySignature(
+    req.header('x-mc-signature'),
+    req.rawBody,
+    signingKey,
+  );
+}
+exports.verifyRequest = verifyRequest;

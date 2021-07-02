@@ -25,7 +25,7 @@ async function getBizData() {
   }
 }
 
-async function getRenderResp({ show_rating = true }) {
+async function getRenderResp({show_rating = true}) {
   const biz_data = await getBizData();
   const { image_url, url, rating, review_count, price, location } = biz_data;
 
@@ -37,8 +37,22 @@ async function getRenderResp({ show_rating = true }) {
         properties: {
           alt: 'business image',
           src: `${image_url}`,
-          href: `${url}`,
+          href: `${url}`
         },
+      },
+      {
+        "type": "BUTTON",
+        "properties": {
+          "text": {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Test this button"
+              }
+            ]
+          }
+        }
       },
       {
         type: 'STACK_LAYOUT',
@@ -150,7 +164,7 @@ const ratingRender = (show_rating, rating) => {
           properties: {
             alt: 'star icon',
             src: `${star_icon_url}`,
-            width: 15,
+            width: '15',
             maxHeight: 15,
           },
         },

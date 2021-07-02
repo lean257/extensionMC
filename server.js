@@ -3,8 +3,9 @@ var path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 const { getRenderResp } = require('./yelpResponse');
-const { verifySignature } = require('./verify');
-const signingKey = require('./config').MC_SIGNING_KEY;
+const { getControlsResponse } = require('./controlRes');
+const { verifyRequest } = require('./verify');
+
 // use raw body for hmac
 app.use(
   express.json({
@@ -16,35 +17,56 @@ app.use(
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/index.html'));
 });
-app.post('/', (req, res) => {
+app.post('/controls', (req, res)=>{
   // verify signature
-  const sig = req.header('x-mc-signature');
-  const signedAt = sig.split(',')[0].substring(2);
-  const givenHmac = sig.split(',')[1].substring(3);
-  if (!verifySignature(signedAt, givenHmac, signingKey, req.rawBody)) {
-    res.send('Error from server: cannot verify signature');
+  if (!verifyRequest(req)) {
+    res.status(401).json({ status: 401, message: 'Unauthorized Signature' });
+    return;
   }
-  if (req.header('x-mc-action') == 'controls') {
-    res.json({
-      controls: [
-        {
-          boolean: {
-            name: 'show_rating',
-            label: 'Show Rating',
-            description: 'Showing business rating',
-            default: true,
+  getControlsResponse()
+  .then(data => res.send(data))
+  .catch((error)=> {
+    res.status(400).json({
+      message: 'Something is wrong with the controls. oops',
+      action: {
+        link: 'https://example.com/authorize',
+        text: 'Authorize',
+      },
+      retryable: false,
+    });
+  })
+})
+
+app.post('/render', (req, res) => {
+  // verify signature
+  if (!verifyRequest(req)) {
+    res.status(401).json({ status: 401, message: 'Unauthorized Signature' });
+    return;
+  }
+  // parse out the controls that get sent with render POST request
+  const { controlValues } = req.body;
+  if (!controlValues) {
+    res.status(400).json({
+      message: 'We are not getting back the correct controls'
+    })
+  }
+  getRenderResp(controlValues)
+    .then((data) => {
+        res.send(data);
+    })
+    .catch((error) => {
+      if (error.status > 400) {
+        res.status(400).json({
+          message: 'Something is wrong with our extension',
+          action: {
+            link: 'https://example.com/authorize',
+            text: 'Authorize',
           },
-        },
-      ],
-    });
-  } else {
-    // parse out the controls that get sent with render POST request
-    const { controlValues } = req.body;
-    getRenderResp(controlValues).then((data) => {
-      res.send(data);
-    });
-  }
-});
+          retryable: false,
+        });
+      }
+    })
+})
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
