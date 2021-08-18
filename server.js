@@ -46,28 +46,14 @@ app.post('/render', (req, res) => {
   // }
   // parse out the controls that get sent with render POST request
   const { controlValues } = req.body;
-  // if (!controlValues) {
-  //   res.status(400).json({
-  //     message: 'We are not getting back the correct controls',
-  //   });
-  // }
+  if (!controlValues) {
+    res.status(400).json({
+      message: 'We are not getting back the correct controls',
+    });
+  }
   getRenderResp(controlValues)
     .then((data) => {
       res.send(data);
-      // res.send({
-      //   type: 'BUTTON',
-      //   properties: {
-      //     text: {
-      //       type: 'paragraph',
-      //       content: [
-      //         {
-      //           type: 'text',
-      //           text: 'Demo extension',
-      //         },
-      //       ],
-      //     },
-      //   },
-      // });
     })
     .catch((error) => {
       console.log(error);

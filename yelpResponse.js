@@ -33,7 +33,7 @@ async function getRenderResp({ show_rating = true }) {
     type: 'STACK_LAYOUT',
     children: [
       {
-        type: 'IMAGES',
+        type: 'IMAGE',
         properties: {
           alt: 'business image',
           src: `${image_url}`,
@@ -164,7 +164,7 @@ const ratingRender = (show_rating, rating) => {
           properties: {
             alt: 'star icon',
             src: `${star_icon_url}`,
-            width: '15',
+            width: 15,
             maxHeight: 15,
           },
         },
