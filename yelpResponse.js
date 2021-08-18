@@ -12,11 +12,11 @@ let yelpREST = axios.create({
 async function getBizData() {
   try {
     const response = await yelpREST(
-      `https://api.yelp.com/v3/businesses/search?term=eleven madison&location=new york`
+      `https://api.yelp.com/v3/businesses/search?term=eleven madison&location=new york`,
     );
     let id_res = await response;
     const data = await yelpREST(
-      `https://api.yelp.com/v3/businesses/${id_res.data.businesses[0].id}`
+      `https://api.yelp.com/v3/businesses/${id_res.data.businesses[0].id}`,
     );
     let biz_data = await data.data;
     return biz_data;
@@ -25,7 +25,7 @@ async function getBizData() {
   }
 }
 
-async function getRenderResp({show_rating = true}) {
+async function getRenderResp({ show_rating = true }) {
   const biz_data = await getBizData();
   const { image_url, url, rating, review_count, price, location } = biz_data;
 
@@ -33,26 +33,26 @@ async function getRenderResp({show_rating = true}) {
     type: 'STACK_LAYOUT',
     children: [
       {
-        type: 'IMAGE',
+        type: 'IMAGES',
         properties: {
           alt: 'business image',
           src: `${image_url}`,
-          href: `${url}`
+          href: `${url}`,
         },
       },
       {
-        "type": "BUTTON",
-        "properties": {
-          "text": {
-            "type": "paragraph",
-            "content": [
+        type: 'BUTTON',
+        properties: {
+          text: {
+            type: 'paragraph',
+            content: [
               {
-                "type": "text",
-                "text": "Test this button"
-              }
-            ]
-          }
-        }
+                type: 'text',
+                text: 'Test this button',
+              },
+            ],
+          },
+        },
       },
       {
         type: 'STACK_LAYOUT',
